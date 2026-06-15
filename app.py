@@ -65,7 +65,7 @@ with col1:
         st.warning("Logo Bwise não encontrada.")
 
 with col2:
-    st.markdown('<h1 class="titulo-sistema">CONFERÊNCIA<br>RECIBO DE FÉRIAS</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="titulo-sistema">CONFERÊNCIA<br>DE RUBRICAS</h1>', unsafe_allow_html=True)
 
 with col3:
     if logo_macaneiro:
