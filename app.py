@@ -22,29 +22,117 @@ st.set_page_config(
 )
 
 # ════════════════════════════════════════════════════════════
-# FUNÇÃO PARA ENCONTRAR AS LOGOS (PNG ou JPG)
+# BUSCA INTELIGENTE DE LOGOS (Resolve os erros de JPG/PNG)
 # ════════════════════════════════════════════════════════════
-def buscar_imagem(nome_base):
+def buscar_logo(palavra_chave):
     """
-    Busca o arquivo de imagem tentando diferentes extensões 
-    e variações de nome (com espaço ou underline).
+    Varre a pasta atual e procura qualquer arquivo de imagem que 
+    contenha a palavra-chave (ex: 'bwise' ou 'macaneiro').
+    Isso evita qualquer erro de nomes com espaço, sublinhado, maiúsculas ou extensões!
     """
-    variacoes_nome = [nome_base, nome_base.replace(" ", "_"), nome_base.replace("_", " ")]
-    extensoes = [".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"]
-    
-    for nome in variacoes_nome:
-        for ext in extensoes:
-            caminho = f"{nome}{ext}"
-            if os.path.exists(caminho):
-                return caminho
+    try:
+        arquivos = os.listdir('.')
+        for arq in arquivos:
+            # Verifica se é imagem e se tem a palavra chave no nome
+            if arq.lower().endswith(('.png', '.jpg', '.jpeg')) and palavra_chave in arq.lower():
+                return arq
+    except Exception:
+        pass
     return None
 
-# Buscando as logos
-logo_bwise = buscar_imagem("logo_bwise")
-logo_macaneiro = buscar_imagem("logo_macaneiro")
+logo_bwise = buscar_logo("bwise")
+logo_macaneiro = buscar_logo("macaneiro")
 
 # ════════════════════════════════════════════════════════════
-# MENU LATERAL (SIDEBAR) - IDENTICO AO ADIANTAMENTO
+# CSS PERSONALIZADO — Layout Escuro (Idêntico ao Adiantamento)
+# ════════════════════════════════════════════════════════════
+st.markdown("""
+<style>
+/* ── Fontes ── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── Reset ── */
+html, body, [class*="css"] {
+    font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Fundo Escuro Geral ── */
+.stApp {
+    background-color: #0d1117 !important;
+    color: #e6edf3 !important;
+}
+
+/* ── Sidebar Escura ── */
+[data-testid="stSidebar"] {
+    background-color: #161b22 !important;
+    border-right: 1px solid #30363d !important;
+}
+
+/* ── Uploader ── */
+[data-testid="stFileUploader"] {
+    background: #0d1117 !important;
+    border: 1.5px dashed #30363d !important;
+    border-radius: 10px !important;
+}
+[data-testid="stFileUploader"]:hover {
+    border-color: #4ea8de !important;
+}
+
+/* ── Títulos ── */
+.titulo-central {
+    text-align: center; 
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem; 
+    font-weight: 800; 
+    line-height: 1.2; 
+    margin-top: 10px;
+    color: #ffffff;
+}
+
+/* ── Botões ── */
+.stButton > button {
+    background: linear-gradient(135deg, #1f4e79, #0078d4) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    padding: 14px 36px !important;
+    width: 100% !important;
+    transition: all 0.2s !important;
+}
+.stButton > button:hover {
+    box-shadow: 0 4px 24px rgba(0,120,212,0.3) !important;
+}
+
+/* ── Download ── */
+.stDownloadButton > button {
+    background: linear-gradient(135deg, #145a32, #1e8449) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-family: 'Syne', sans-serif !important;
+    font-weight: 700 !important;
+    width: 100% !important;
+}
+
+/* ── Tabelas ── */
+.stDataFrame {
+    border: 1px solid #21262d !important;
+    border-radius: 8px !important;
+}
+
+/* ── Alertas (Caixas azuis, amarelas, etc) ── */
+.stAlert {
+    border-radius: 10px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+# ════════════════════════════════════════════════════════════
+# MENU LATERAL (SIDEBAR)
 # ════════════════════════════════════════════════════════════
 with st.sidebar:
     st.markdown("### 📁 Importação de Dados")
@@ -68,56 +156,48 @@ with st.sidebar:
         label_visibility="collapsed"
     )
 
+
 # ════════════════════════════════════════════════════════════
 # CABEÇALHO PRINCIPAL
 # ════════════════════════════════════════════════════════════
 col1, col2, col3 = st.columns([1, 2.5, 1])
 
-# Coluna 1: Logo Bwise
 with col1:
     if logo_bwise:
         st.image(logo_bwise, use_column_width=True)
     else:
-        st.warning("Logo Bwise não encontrada\n(Verifique se o nome é 'logo bwise' .png ou .jpg).")
+        st.warning("Logo Bwise não encontrada.")
 
-# Coluna 2: Título Central
 with col2:
-    st.markdown(
-        """
-        <h1 style='text-align: center; font-size: 3rem; font-weight: 800; line-height: 1.2; margin-top: 10px;'>
-            CONFERÊNCIA<br>DE FOLHA
-        </h1>
-        """, 
-        unsafe_allow_html=True
-    )
+    st.markdown('<div class="titulo-central">CONFERÊNCIA<br>DE FOLHA</div>', unsafe_allow_html=True)
 
-# Coluna 3: Logo Maçaneiro
 with col3:
     if logo_macaneiro:
         st.image(logo_macaneiro, use_column_width=True)
     else:
-        st.warning("Logo Maçaneiro não encontrada\n(Verifique se o nome é 'logo macaneiro' .png ou .jpg).")
+        st.warning("Logo Maçaneiro não encontrada.")
 
 st.markdown("---")
 
 # ════════════════════════════════════════════════════════════
-# MENSAGEM INICIAL E TRAVA (Se não houver arquivos)
+# TELA INICIAL (SEM ARQUIVOS)
 # ════════════════════════════════════════════════════════════
 if not arq_lanc or not arq_sist:
-    with st.expander("📖 Como extrair e preparar as planilhas (Passo a Passo)"):
-        st.write("1. Faça a exportação da planilha de lançamentos do mês correspondente.")
+    with st.expander("📖 Como extrair as planilhas do Sistema (Passo a Passo)"):
+        st.write("1. Faça a exportação da planilha de lançamentos do mês.")
         st.write("2. Faça a exportação da planilha de eventos do sistema.")
         st.write("3. Anexe os dois arquivos no menu lateral esquerdo (📁 Importação de Dados).")
         
     st.info("👉 Por favor, anexe as DUAS planilhas no menu lateral para iniciar a conferência.")
-    st.stop() # Para a execução do app aqui até que os arquivos sejam enviados
+    st.stop()
+
 
 # ════════════════════════════════════════════════════════════
-# EXECUÇÃO DA COMPARAÇÃO (Aparece só quando os anexos estão OK)
+# COMPARAÇÃO (APENAS SE OS ARQUIVOS EXISTIREM)
 # ════════════════════════════════════════════════════════════
 col_btn, _ = st.columns([1, 3])
 with col_btn:
-    btn_comparar = st.button("⚡  INICIAR COMPARAÇÃO", use_container_width=True)
+    btn_comparar = st.button("⚡  INICIAR COMPARAÇÃO")
 
 if btn_comparar:
     with st.spinner("⚙️  Processando cruzamento de dados..."):
@@ -127,21 +207,21 @@ if btn_comparar:
                 BytesIO(arq_sist.read()),
             )
         except Exception as e:
-            st.error(f"❌ Erro durante a comparação: {e}")
+            st.error(f"❌ Erro na comparação: {e}")
             st.stop()
 
     if not resultados:
-        st.warning("⚠️  Nenhum evento foi comparado. Verifique se os arquivos estão corretos.")
+        st.warning("⚠️  Nenhum evento foi comparado. Verifique os arquivos.")
         st.stop()
 
     df = pd.DataFrame(resultados)
     st.session_state["df"]         = df
     st.session_state["resultados"] = resultados
-    st.success(f"✅ Comparação concluída! {len(df)} eventos processados.")
+    st.success(f"✅ Comparação concluída com sucesso! ({len(df)} eventos processados)")
 
 
 # ════════════════════════════════════════════════════════════
-# RESULTADOS E MÉTRICAS
+# EXIBIÇÃO DE RESULTADOS
 # ════════════════════════════════════════════════════════════
 if "df" in st.session_state:
     df         = st.session_state["df"]
@@ -155,7 +235,6 @@ if "df" in st.session_state:
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("### 📊 Resultado Geral")
 
-    # Métricas nativas do Streamlit
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Eventos Comparados", total)
     m2.metric("Conferidos OK ✅", ok_tot)
@@ -164,7 +243,7 @@ if "df" in st.session_state:
 
     st.markdown("---")
 
-    # ── Filtros ──────────────────────────────────────────────
+    # Filtros
     st.markdown('### 🔍 Filtros')
     fc1, fc2, fc3 = st.columns([1.5, 2, 2])
 
@@ -179,7 +258,7 @@ if "df" in st.session_state:
         todos_eventos = sorted(df["Nome do Evento"].unique().tolist())
         filtro_evento = st.multiselect("Evento / Rubrica", todos_eventos, placeholder="Todos")
 
-    # Aplica filtros
+    # Aplicação de filtros
     df_filtrado = df.copy()
     if filtro_status != "Todos":
         df_filtrado = df_filtrado[df_filtrado["Status"] == filtro_status]
@@ -194,15 +273,15 @@ if "df" in st.session_state:
 
     st.caption(f"Exibindo {len(df_filtrado)} de {total} eventos")
 
-    # ── Tabela ───────────────────────────────────────────────
+    # Tabela de dados colorida
     def colorir_linha(row):
         status = row["Status"]
         if "OK" in str(status):
-            cor = "background-color: rgba(63, 185, 80, 0.1);"
+            cor = "background-color: rgba(63, 185, 80, 0.15);"
         elif status == "DIVERGENTE":
-            cor = "background-color: rgba(248, 81, 73, 0.1);"
+            cor = "background-color: rgba(248, 81, 73, 0.15);"
         elif status == "NAO_ENCONTRADO":
-            cor = "background-color: rgba(210, 153, 34, 0.1);"
+            cor = "background-color: rgba(210, 153, 34, 0.15);"
         else:
             cor = ""
         return [cor] * len(row)
@@ -216,7 +295,7 @@ if "df" in st.session_state:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Download ─────────────────────────────────────────────
+    # Exportação
     st.markdown('### ⬇️ Exportar Relatório')
     excel_bytes = gerar_excel(resultados)
 
@@ -234,7 +313,7 @@ if "df" in st.session_state:
         if not df_div.empty:
             csv_div = df_div.to_csv(index=False, sep=";", decimal=",").encode("utf-8-sig")
             st.download_button(
-                label="⚠️  Baixar Divergências (CSV)",
+                label="⚠️  Baixar Divergências",
                 data=csv_div,
                 file_name="DIVERGENCIAS.csv",
                 mime="text/csv",
