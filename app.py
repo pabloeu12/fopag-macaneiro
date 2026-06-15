@@ -26,7 +26,7 @@ st.set_page_config(
 def buscar_logo(palavra_chave):
     """
     Varre a pasta atual e procura qualquer arquivo de imagem que 
-    conha a palavra-chave (ex: 'bwise' ou 'macaneiro').
+    contenha a palavra-chave (ex: 'bwise' ou 'macaneiro').
     """
     try:
         arquivos = os.listdir('.')
@@ -45,7 +45,7 @@ logo_macaneiro = buscar_logo("macaneiro")
 # ════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght=400;600;700;800&family=DM+Sans:wght=300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
 html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
@@ -69,7 +69,7 @@ html, body, [class*="css"] {
 .titulo-central {
     text-align: center; 
     font-family: 'Syne', sans-serif;
-    font-size: 1.8rem; /* Reduzido em 40% para ficar mais proporcional */
+    font-size: 1.8rem; 
     font-weight: 800; 
     line-height: 1.2; 
     margin-top: 15px;
@@ -157,13 +157,27 @@ with col3:
 st.markdown("---")
 
 # ════════════════════════════════════════════════════════════
-# TELA INICIAL (SEM ARQUIVOS)
+# TELA INICIAL (SEM ARQUIVOS) - PASSO A PASSO ATUALIZADO
 # ════════════════════════════════════════════════════════════
 if not arq_lanc or not arq_sist:
     with st.expander("📖 Como extrair as planilhas do Sistema (Passo a Passo)"):
-        st.write("1. Faça a exportação da planilha de lançamentos do mês.")
-        st.write("2. Faça a exportação da planilha de eventos do sistema.")
-        st.write("3. Anexe os dois arquivos no menu lateral esquerdo (📁 Importação de Dados).")
+        st.markdown("### 1️⃣ PLANILHA DE LANÇAMENTOS")
+        st.markdown("""
+        * **Origem:** Recebemos a planilha da Maçaneiro diretamente via e-mail.
+        * **Divisão:** O arquivo original costuma vir dividido em três partes (**ADM, Motoristas e Manobra**). 
+          * *Nota:* Você pode optar por unificar as abas/arquivos em uma só ou realizar o processo de conferência de forma separada no sistema.
+        * **Ajustes Obrigatórios antes de anexar:**
+          * Remover completamente todas as fórmulas e formatações de células.
+          * Garantir que a **primeira linha** da planilha seja estritamente o cabeçalho e as linhas seguintes contenham apenas os dados/conteúdos.
+        """)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        st.markdown("### 2️⃣ LISTA DE EVENTOS DE RECIBO DE PAGAMENTO (Sistema)")
+        st.markdown("""
+        * **Caminho para extração no sistema:**
+          * Folha de Pagamento ➔ Folha de Pagamento ➔ Lista de Eventos de Recibos de Pagamento...
+        """)
         
     st.info("👉 Por favor, anexe as DUAS planilhas no menu lateral para iniciar a conferência.")
     st.stop()
