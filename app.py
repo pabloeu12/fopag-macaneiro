@@ -8,7 +8,7 @@ from comparador import executar_comparacao, gerar_excel
 # CONFIGURAÇÃO DA PÁGINA E CORES
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Conferência de Férias - Bwise & Maçaneiro", 
+    page_title="Conferência de Rubricas - Bwise & Maçaneiro", 
     layout="wide",
     initial_sidebar_state="expanded"
 )
