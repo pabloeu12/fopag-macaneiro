@@ -26,7 +26,7 @@ st.set_page_config(
 def buscar_logo(palavra_chave):
     """
     Varre a pasta atual e procura qualquer arquivo de imagem que 
-    contenha a palavra-chave (ex: 'bwise' ou 'macaneiro').
+    conha a palavra-chave (ex: 'bwise' ou 'macaneiro').
     """
     try:
         arquivos = os.listdir('.')
@@ -45,7 +45,7 @@ logo_macaneiro = buscar_logo("macaneiro")
 # ════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght=400;600;700;800&family=DM+Sans:wght=300;400;500&display=swap');
 
 html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
@@ -69,10 +69,10 @@ html, body, [class*="css"] {
 .titulo-central {
     text-align: center; 
     font-family: 'Syne', sans-serif;
-    font-size: 3rem; 
+    font-size: 1.8rem; /* Reduzido em 40% para ficar mais proporcional */
     font-weight: 800; 
     line-height: 1.2; 
-    margin-top: 10px;
+    margin-top: 15px;
     color: #ffffff;
 }
 .stButton > button {
