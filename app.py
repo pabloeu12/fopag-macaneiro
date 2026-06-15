@@ -1,12 +1,13 @@
 """
 app.py
 ──────
-Interface Streamlit da Conferência de Folha — Maçaneiro.
+Interface Streamlit da Conferência de Folha — Maçaneiro e Bwise.
 Execute com:  streamlit run app.py
 """
 
 import pandas as pd
 import streamlit as st
+import os
 from io import BytesIO
 from comparador import executar_comparacao, gerar_excel
 
@@ -19,6 +20,10 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+
+# Caminhos das logos (ajuste as extensões se for .jpg ou .jpeg)
+LOGO_MACANEIRO = "logo_macaneiro.png"
+LOGO_BWISE = "logo_bwise.png"
 
 # ════════════════════════════════════════════════════════════
 # CSS PERSONALIZADO — Design profissional
@@ -39,27 +44,27 @@ html, body, [class*="css"] {
     color: #e6edf3;
 }
 
-/* ── Bloco do cabeçalho principal ── */
-.header-block {
-    background: linear-gradient(135deg, #0f2942 0%, #1a3a5c 50%, #0f2942 100%);
-    border: 1px solid #1f4e79;
+/* ── Bloco do cabeçalho principal (Novo Layout) ── */
+.header-container {
+    background: linear-gradient(135deg, #161b22 0%, #1a202c 100%);
+    border: 1px solid #30363d;
     border-radius: 16px;
-    padding: 40px 48px;
+    padding: 24px 32px;
     margin-bottom: 32px;
-    position: relative;
-    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
 }
-.header-block::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 220px; height: 220px;
-    background: radial-gradient(circle, rgba(0,120,212,0.18) 0%, transparent 70%);
-    border-radius: 50%;
+
+.header-title-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
+
 .header-title {
     font-family: 'Syne', sans-serif;
-    font-size: 2.1rem;
+    font-size: 2rem;
     font-weight: 800;
     color: #ffffff;
     margin: 0 0 6px 0;
@@ -84,7 +89,8 @@ html, body, [class*="css"] {
     text-transform: uppercase;
     padding: 4px 12px;
     border-radius: 20px;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
+    align-self: center;
 }
 
 /* ── Cards de upload ── */
@@ -166,7 +172,7 @@ html, body, [class*="css"] {
     top: 18px; right: 18px;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #30363d;
+    color: #8b949e;
 }
 
 /* ── Barra de progresso de acerto ── */
@@ -271,7 +277,7 @@ html, body, [class*="css"] {
     transform: translateY(-1px) !important;
 }
 
-/* ── Uploader ── */
+/* ── Outros elementos ── */
 [data-testid="stFileUploader"] {
     background: #0d1117 !important;
     border: 1.5px dashed #30363d !important;
@@ -280,37 +286,14 @@ html, body, [class*="css"] {
 [data-testid="stFileUploader"]:hover {
     border-color: #4ea8de !important;
 }
-
-/* ── Selectbox e multiselect ── */
 [data-testid="stSelectbox"] > div > div,
 [data-testid="stMultiSelect"] > div > div {
     background: #161b22 !important;
     border-color: #30363d !important;
     color: #e6edf3 !important;
 }
-
-/* ── Alerta de sucesso/erro ── */
-.stAlert {
-    border-radius: 10px !important;
-}
-
-/* ── Divider ── */
-hr {
-    border-color: #21262d !important;
-}
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #0d1117; }
-::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #4ea8de; }
-
-/* ── Status chips na tabela ── */
-.chip-ok      { background:#1a3a28; color:#3fb950; padding:2px 10px; border-radius:99px; font-size:0.75rem; font-weight:600; }
-.chip-div     { background:#3d1a1a; color:#f85149; padding:2px 10px; border-radius:99px; font-size:0.75rem; font-weight:600; }
-.chip-nao     { background:#3a2d10; color:#d29922; padding:2px 10px; border-radius:99px; font-size:0.75rem; font-weight:600; }
-
-/* ── Tag de arquivo carregado ── */
+.stAlert { border-radius: 10px !important; }
+hr { border-color: #21262d !important; }
 .file-ok {
     display: inline-flex;
     align-items: center;
@@ -329,15 +312,40 @@ hr {
 
 
 # ════════════════════════════════════════════════════════════
-# CABEÇALHO
+# CABEÇALHO (NOVO LAYOUT COM LOGOS)
 # ════════════════════════════════════════════════════════════
-st.markdown("""
-<div class="header-block">
-    <div class="header-badge">Departamento Pessoal</div>
-    <p class="header-title">Conferência de Folha<br>Maçaneiro</p>
-    <p class="header-sub">Compare lançamentos manuais com eventos do sistema · Identifique divergências automaticamente · Gere relatório em Excel</p>
-</div>
-""", unsafe_allow_html=True)
+with st.container():
+    st.markdown('<div class="header-container">', unsafe_allow_html=True)
+    
+    col_logo_esq, col_titulo, col_logo_dir = st.columns([1.5, 5, 1.5])
+    
+    # Logo Esquerda (Maçaneiro)
+    with col_logo_esq:
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True) # Espaçador
+        if os.path.exists(LOGO_MACANEIRO):
+            st.image(LOGO_MACANEIRO, use_column_width=True)
+        else:
+            st.info("🖼️ Faltou: logo_macaneiro.png")
+            
+    # Títulos e Badge (Centro)
+    with col_titulo:
+        st.markdown("""
+        <div class="header-title-box">
+            <div class="header-badge">Departamento Pessoal</div>
+            <p class="header-title">Conferência de Folha</p>
+            <p class="header-sub">Automação e cruzamento inteligente de lançamentos</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    # Logo Direita (Bwise)
+    with col_logo_dir:
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True) # Espaçador
+        if os.path.exists(LOGO_BWISE):
+            st.image(LOGO_BWISE, use_column_width=True)
+        else:
+            st.info("🖼️ Faltou: logo_bwise.png")
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ════════════════════════════════════════════════════════════
