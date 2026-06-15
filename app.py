@@ -2,7 +2,6 @@
 app.py
 ──────
 Interface Streamlit da Conferência de Folha — Maçaneiro e Bwise.
-Execute com:  streamlit run app.py
 """
 
 import pandas as pd
@@ -28,12 +27,10 @@ def buscar_logo(palavra_chave):
     """
     Varre a pasta atual e procura qualquer arquivo de imagem que 
     contenha a palavra-chave (ex: 'bwise' ou 'macaneiro').
-    Isso evita qualquer erro de nomes com espaço, sublinhado, maiúsculas ou extensões!
     """
     try:
         arquivos = os.listdir('.')
         for arq in arquivos:
-            # Verifica se é imagem e se tem a palavra chave no nome
             if arq.lower().endswith(('.png', '.jpg', '.jpeg')) and palavra_chave in arq.lower():
                 return arq
     except Exception:
@@ -48,27 +45,19 @@ logo_macaneiro = buscar_logo("macaneiro")
 # ════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
-/* ── Fontes ── */
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
-/* ── Reset ── */
 html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
 }
-
-/* ── Fundo Escuro Geral ── */
 .stApp {
     background-color: #0d1117 !important;
     color: #e6edf3 !important;
 }
-
-/* ── Sidebar Escura ── */
 [data-testid="stSidebar"] {
     background-color: #161b22 !important;
     border-right: 1px solid #30363d !important;
 }
-
-/* ── Uploader ── */
 [data-testid="stFileUploader"] {
     background: #0d1117 !important;
     border: 1.5px dashed #30363d !important;
@@ -77,8 +66,6 @@ html, body, [class*="css"] {
 [data-testid="stFileUploader"]:hover {
     border-color: #4ea8de !important;
 }
-
-/* ── Títulos ── */
 .titulo-central {
     text-align: center; 
     font-family: 'Syne', sans-serif;
@@ -88,8 +75,6 @@ html, body, [class*="css"] {
     margin-top: 10px;
     color: #ffffff;
 }
-
-/* ── Botões ── */
 .stButton > button {
     background: linear-gradient(135deg, #1f4e79, #0078d4) !important;
     color: white !important;
@@ -105,8 +90,6 @@ html, body, [class*="css"] {
 .stButton > button:hover {
     box-shadow: 0 4px 24px rgba(0,120,212,0.3) !important;
 }
-
-/* ── Download ── */
 .stDownloadButton > button {
     background: linear-gradient(135deg, #145a32, #1e8449) !important;
     color: white !important;
@@ -116,20 +99,15 @@ html, body, [class*="css"] {
     font-weight: 700 !important;
     width: 100% !important;
 }
-
-/* ── Tabelas ── */
 .stDataFrame {
     border: 1px solid #21262d !important;
     border-radius: 8px !important;
 }
-
-/* ── Alertas (Caixas azuis, amarelas, etc) ── */
 .stAlert {
     border-radius: 10px !important;
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 # ════════════════════════════════════════════════════════════
 # MENU LATERAL (SIDEBAR)
@@ -155,7 +133,6 @@ with st.sidebar:
         key="sist", 
         label_visibility="collapsed"
     )
-
 
 # ════════════════════════════════════════════════════════════
 # CABEÇALHO PRINCIPAL
@@ -191,16 +168,15 @@ if not arq_lanc or not arq_sist:
     st.info("👉 Por favor, anexe as DUAS planilhas no menu lateral para iniciar a conferência.")
     st.stop()
 
-
 # ════════════════════════════════════════════════════════════
-# COMPARAÇÃO (APENAS SE OS ARQUIVOS EXISTIREM)
+# COMPARAÇÃO E RESULTADOS
 # ════════════════════════════════════════════════════════════
 col_btn, _ = st.columns([1, 3])
 with col_btn:
     btn_comparar = st.button("⚡  INICIAR COMPARAÇÃO")
 
 if btn_comparar:
-    with st.spinner("⚙️  Processando cruzamento de dados..."):
+    with st.spinner("⚙️  A processar cruzamento de dados..."):
         try:
             resultados = executar_comparacao(
                 BytesIO(arq_lanc.read()),
@@ -219,10 +195,6 @@ if btn_comparar:
     st.session_state["resultados"] = resultados
     st.success(f"✅ Comparação concluída com sucesso! ({len(df)} eventos processados)")
 
-
-# ════════════════════════════════════════════════════════════
-# EXIBIÇÃO DE RESULTADOS
-# ════════════════════════════════════════════════════════════
 if "df" in st.session_state:
     df         = st.session_state["df"]
     resultados = st.session_state["resultados"]
@@ -243,7 +215,6 @@ if "df" in st.session_state:
 
     st.markdown("---")
 
-    # Filtros
     st.markdown('### 🔍 Filtros')
     fc1, fc2, fc3 = st.columns([1.5, 2, 2])
 
@@ -258,7 +229,6 @@ if "df" in st.session_state:
         todos_eventos = sorted(df["Nome do Evento"].unique().tolist())
         filtro_evento = st.multiselect("Evento / Rubrica", todos_eventos, placeholder="Todos")
 
-    # Aplicação de filtros
     df_filtrado = df.copy()
     if filtro_status != "Todos":
         df_filtrado = df_filtrado[df_filtrado["Status"] == filtro_status]
@@ -271,9 +241,8 @@ if "df" in st.session_state:
     if filtro_evento:
         df_filtrado = df_filtrado[df_filtrado["Nome do Evento"].isin(filtro_evento)]
 
-    st.caption(f"Exibindo {len(df_filtrado)} de {total} eventos")
+    st.caption(f"A exibir {len(df_filtrado)} de {total} eventos")
 
-    # Tabela de dados colorida
     def colorir_linha(row):
         status = row["Status"]
         if "OK" in str(status):
@@ -295,7 +264,6 @@ if "df" in st.session_state:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Exportação
     st.markdown('### ⬇️ Exportar Relatório')
     excel_bytes = gerar_excel(resultados)
 
