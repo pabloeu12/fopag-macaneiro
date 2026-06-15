@@ -55,12 +55,12 @@ st.markdown(
 # -----------------------------------------------------------------------------
 # CABEÇALHO COM LOGOS
 # -----------------------------------------------------------------------------
-# Ajuste na proporção das colunas para manter o título bem centralizado
-col1, col2, col3 = st.columns([1, 3, 1])
+# Proporção ajustada para [1, 4, 1] e alinhamento vertical centralizado
+col1, col2, col3 = st.columns([1, 4, 1], vertical_alignment="center")
 
 with col1:
     if logo_bwise:
-        st.image(logo_bwise, width=200)
+        st.image(logo_bwise, width=180)
     else:
         st.warning("Logo Bwise não encontrada.")
 
@@ -69,7 +69,10 @@ with col2:
 
 with col3:
     if logo_macaneiro:
-        st.image(logo_macaneiro, width=200)
+        # Colunas internas para forçar o alinhamento da logo à direita
+        _, sub_col = st.columns([1, 1]) 
+        with sub_col:
+            st.image(logo_macaneiro, width=180)
     else:
         st.warning("Logo Maçaneiro não encontrada.")
 
@@ -225,4 +228,11 @@ if "df" in st.session_state:
     st.markdown('### <span class="subtitulo">⬇️ Exportar Relatório</span>', unsafe_allow_html=True)
     excel_bytes = gerar_excel(resultados)
 
-    dcol
+    # Botão para baixar a planilha gerada
+    st.download_button(
+        label="📥 Baixar Planilha de Divergências",
+        data=excel_bytes,
+        file_name="Relatorio_Divergencias.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type="primary"
+    )
