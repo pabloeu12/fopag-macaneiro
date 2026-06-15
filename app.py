@@ -1,27 +1,23 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
 import os
 from io import BytesIO
 from comparador import executar_comparacao, gerar_excel
 
-# ════════════════════════════════════════════════════════════
-# CONFIGURAÇÃO DA PÁGINA
-# ════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
+# CONFIGURAÇÃO DA PÁGINA E CORES
+# -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Conferência de Férias",
-    page_icon="🌴",  # Ícone atualizado para o contexto de férias
+    page_title="Conferência de Férias - Bwise & Maçaneiro", 
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="expanded"
 )
 
-# ════════════════════════════════════════════════════════════
-# BUSCA INTELIGENTE DE LOGOS (Resolve os erros de JPG/PNG)
-# ════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
+# BUSCA INTELIGENTE DE LOGOS
+# -----------------------------------------------------------------------------
 def buscar_logo(palavra_chave):
-    """
-    Varre a pasta atual e procura qualquer arquivo de imagem que 
-    contenha a palavra-chave (ex: 'bwise' ou 'macaneiro').
-    """
+    """Varre a pasta atual e procura imagens que contenham a palavra-chave."""
     try:
         arquivos = os.listdir('.')
         for arq in arquivos:
@@ -34,80 +30,56 @@ def buscar_logo(palavra_chave):
 logo_bwise = buscar_logo("bwise")
 logo_macaneiro = buscar_logo("macaneiro")
 
-# ════════════════════════════════════════════════════════════
-# CSS PERSONALIZADO — Layout Escuro 
-# ════════════════════════════════════════════════════════════
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+# Estilos CSS Customizados para o Título Centralizado e Cores Bwise
+st.markdown(
+    """
+    <style>
+    .titulo-sistema {
+        text-align: center;
+        color: #1E3A8A; /* Azul Escuro Bwise */
+        font-family: 'Arial', sans-serif;
+        font-size: 1.8rem;
+        font-weight: bold;
+        line-height: 1.2;
+        margin-top: 15px;
+    }
+    .subtitulo {
+        color: #1E3A8A;
+        font-weight: bold;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
-}
-.stApp {
-    background-color: #0d1117 !important;
-    color: #e6edf3 !important;
-}
-[data-testid="stSidebar"] {
-    background-color: #161b22 !important;
-    border-right: 1px solid #30363d !important;
-}
-[data-testid="stFileUploader"] {
-    background: #0d1117 !important;
-    border: 1.5px dashed #30363d !important;
-    border-radius: 10px !important;
-}
-[data-testid="stFileUploader"]:hover {
-    border-color: #4ea8de !important;
-}
-.titulo-central {
-    text-align: center; 
-    font-family: 'Syne', sans-serif;
-    font-size: 1.8rem; 
-    font-weight: 800; 
-    line-height: 1.2; 
-    margin-top: 15px;
-    color: #ffffff;
-}
-.stButton > button {
-    background: linear-gradient(135deg, #1f4e79, #0078d4) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 10px !important;
-    font-family: 'Syne', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 1rem !important;
-    padding: 14px 36px !important;
-    width: 100% !important;
-    transition: all 0.2s !important;
-}
-.stButton > button:hover {
-    box-shadow: 0 4px 24px rgba(0,120,212,0.3) !important;
-}
-.stDownloadButton > button {
-    background: linear-gradient(135deg, #145a32, #1e8449) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 10px !important;
-    font-family: 'Syne', sans-serif !important;
-    font-weight: 700 !important;
-    width: 100% !important;
-}
-.stDataFrame {
-    border: 1px solid #21262d !important;
-    border-radius: 8px !important;
-}
-.stAlert {
-    border-radius: 10px !important;
-}
-</style>
-""", unsafe_allow_html=True)
+# -----------------------------------------------------------------------------
+# CABEÇALHO COM LOGOS
+# -----------------------------------------------------------------------------
+# Ajuste na proporção das colunas para manter o título bem centralizado
+col1, col2, col3 = st.columns([1, 3, 1])
 
-# ════════════════════════════════════════════════════════════
+with col1:
+    if logo_bwise:
+        st.image(logo_bwise, width=200)
+    else:
+        st.warning("Logo Bwise não encontrada.")
+
+with col2:
+    st.markdown('<h1 class="titulo-sistema">CONFERÊNCIA<br>RECIBO DE FÉRIAS</h1>', unsafe_allow_html=True)
+
+with col3:
+    if logo_macaneiro:
+        st.image(logo_macaneiro, width=200)
+    else:
+        st.warning("Logo Maçaneiro não encontrada.")
+
+st.markdown("---")
+
+# -----------------------------------------------------------------------------
 # MENU LATERAL (SIDEBAR)
-# ════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### 📁 Importação de Dados")
+    st.markdown('### <span class="subtitulo">📁 Importação de Dados</span>', unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     
     st.markdown("**1. Upload: PLANILHA DE LANÇAMENTOS**")
@@ -128,32 +100,9 @@ with st.sidebar:
         label_visibility="collapsed"
     )
 
-# ════════════════════════════════════════════════════════════
-# CABEÇALHO PRINCIPAL
-# ════════════════════════════════════════════════════════════
-col1, col2, col3 = st.columns([1, 2.5, 1])
-
-with col1:
-    if logo_bwise:
-        st.image(logo_bwise, use_column_width=True)
-    else:
-        st.warning("Logo Bwise não encontrada.")
-
-with col2:
-    # Título ajustado para Férias
-    st.markdown('<div class="titulo-central">CONFERÊNCIA<br>DE FÉRIAS</div>', unsafe_allow_html=True)
-
-with col3:
-    if logo_macaneiro:
-        st.image(logo_macaneiro, use_column_width=True)
-    else:
-        st.warning("Logo Maçaneiro não encontrada.")
-
-st.markdown("---")
-
-# ════════════════════════════════════════════════════════════
-# TELA INICIAL (SEM ARQUIVOS) - PASSO A PASSO ATUALIZADO
-# ════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
+# TELA INICIAL (SEM ARQUIVOS) - PASSO A PASSO
+# -----------------------------------------------------------------------------
 if not arq_lanc or not arq_sist:
     with st.expander("📖 Como extrair as planilhas do Sistema (Passo a Passo)"):
         st.markdown("### 1️⃣ PLANILHA DE LANÇAMENTOS")
@@ -177,9 +126,9 @@ if not arq_lanc or not arq_sist:
     st.info("👉 Por favor, anexe as DUAS planilhas no menu lateral para iniciar a conferência.")
     st.stop()
 
-# ════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
 # COMPARAÇÃO E RESULTADOS
-# ════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
 col_btn, _ = st.columns([1, 3])
 with col_btn:
     btn_comparar = st.button("⚡  INICIAR COMPARAÇÃO")
@@ -214,7 +163,7 @@ if "df" in st.session_state:
     nao_enc = (df["Status"] == "NAO_ENCONTRADO").sum()
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("### 📊 Resultado Geral")
+    st.markdown('### <span class="subtitulo">📊 Resultado Geral</span>', unsafe_allow_html=True)
 
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Eventos Comparados", total)
@@ -224,7 +173,7 @@ if "df" in st.session_state:
 
     st.markdown("---")
 
-    st.markdown('### 🔍 Filtros')
+    st.markdown('### <span class="subtitulo">🔍 Filtros</span>', unsafe_allow_html=True)
     fc1, fc2, fc3 = st.columns([1.5, 2, 2])
 
     with fc1:
@@ -273,26 +222,7 @@ if "df" in st.session_state:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    st.markdown('### ⬇️ Exportar Relatório')
+    st.markdown('### <span class="subtitulo">⬇️ Exportar Relatório</span>', unsafe_allow_html=True)
     excel_bytes = gerar_excel(resultados)
 
-    dcol1, dcol2, dcol3 = st.columns([1, 1, 2])
-    with dcol1:
-        st.download_button(
-            label="📥  Baixar Excel Completo",
-            data=excel_bytes,
-            file_name="CONFERENCIA_FERIAS_FINAL.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True
-        )
-    with dcol2:
-        df_div = df[df["Status"] == "DIVERGENTE"]
-        if not df_div.empty:
-            csv_div = df_div.to_csv(index=False, sep=";", decimal=",").encode("utf-8-sig")
-            st.download_button(
-                label="⚠️  Baixar Divergências",
-                data=csv_div,
-                file_name="DIVERGENCIAS_FERIAS.csv",
-                mime="text/csv",
-                use_container_width=True
-            )
+    dcol
